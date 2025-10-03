@@ -14,10 +14,28 @@ const EnhancedSqueezeScanner = () => {
     legendary: 0,
     strong: 0,
     moderate: 0,
+    weak: 0,
     alertCount: 0,
     ctbExplosions: 0,
     imminentSqueezes: 0
   });
+
+  // Debug summary updates
+  useEffect(() => {
+    console.log('📊 Summary state updated:', summary);
+  }, [summary]);
+
+  // Auto-start scan on component mount for better UX
+  useEffect(() => {
+    console.log('🔄 Component mounted - starting initial scan for better UX');
+    // Trigger initial scan after component mounts for immediate data
+    setTimeout(() => {
+      if (!realTimeMode && !isScanning) {
+        console.log('🚀 Auto-starting initial scan...');
+        startBulkScan();
+      }
+    }, 1500);
+  }, []);
   const [apiMode, setApiMode] = useState('DEMO');
   const [useExpandedData, setUseExpandedData] = useState(true);
   const [autoRefresh, setAutoRefresh] = useState(false);
@@ -191,6 +209,8 @@ const EnhancedSqueezeScanner = () => {
         }
         
         console.log(`🚀 Starting scan with endpoint: ${endpoint}`);
+        console.log(`📋 Scan config: useExpandedData=${useExpandedData}, useLiveData=${useLiveData}`);
+        console.log(`🔍 Final endpoint decision: ${endpoint}`);
         setScanProgress(30);
         
         const response = await fetch(endpoint, {
@@ -207,9 +227,33 @@ const EnhancedSqueezeScanner = () => {
         setScanProgress(60);
         const data = await response.json();
         
+        console.log(`📈 API Response:`, data.success ? 'Success' : 'Failed');
+        console.log(`📊 Data received:`, {
+          resultsCount: data.results?.length || 0,
+          summaryLegendary: data.summary?.legendary || 0,
+          mode: data.mode
+        });
+        
         if (data.success) {
+          console.log('✅ Setting stocks:', data.results?.length || 0);
+          console.log('✅ Setting summary:', data.summary);
+          console.log('✅ Previous summary state:', summary);
+          
+          // Set the summary first to check if it's working
+          const newSummary = {
+            total: data.summary?.total || 0,
+            legendary: data.summary?.legendary || 0,
+            strong: data.summary?.strong || 0,
+            moderate: data.summary?.moderate || 0,
+            weak: data.summary?.weak || 0,
+            alertCount: data.summary?.alertCount || 0,
+            ctbExplosions: data.summary?.ctbExplosions || 0,
+            imminentSqueezes: data.summary?.imminentSqueezes || 0
+          };
+          
+          console.log('✅ New summary to set:', newSummary);
           setStocks(data.results || []);
-          setSummary(data.summary || summary);
+          setSummary(newSummary);
           setApiMode(data.mode || 'DEMO');
           
           // Extract and process alerts

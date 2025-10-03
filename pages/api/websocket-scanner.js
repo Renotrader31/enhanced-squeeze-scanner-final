@@ -1,12 +1,26 @@
 // WebSocket Scanner - Real-time data streaming
 import { Server } from 'socket.io';
 
+// Production WebSocket configuration for Vercel
+const ioOptions = {
+  cors: {
+    origin: process.env.NODE_ENV === 'production' 
+      ? ["https://*.vercel.app", "https://*.vercel.com", process.env.VERCEL_URL]
+      : ["http://localhost:3000", "http://localhost:3001"],
+    methods: ["GET", "POST"],
+    credentials: true
+  },
+  transports: ['websocket', 'polling'],
+  pingTimeout: 60000,
+  pingInterval: 25000
+};
+
 const handler = (req, res) => {
   if (res.socket.server.io) {
     console.log('Socket is already running');
   } else {
     console.log('Socket is initializing');
-    const io = new Server(res.socket.server);
+    const io = new Server(res.socket.server, ioOptions);
     res.socket.server.io = io;
 
     // Handle new connections

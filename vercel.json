@@ -10,22 +10,7 @@
       "runtime": "nodejs20.x"
     }
   },
-  "env": {
-    "NEXT_PUBLIC_USE_LIVE_DATA": "@next_public_use_live_data",
-    "ORTEX_API_KEY": "@ortex_api_key",
-    "NEXT_PUBLIC_AUTO_REFRESH_INTERVAL": "30000",
-    "NEXT_PUBLIC_DEFAULT_MIN_HOLY_GRAIL": "60",
-    "NEXT_PUBLIC_SHOW_ALERTS": "true",
-    "NEXT_PUBLIC_ENABLE_ANIMATIONS": "true",
-    "NEXT_PUBLIC_MAX_RESULTS": "100"
-  },
   "regions": ["iad1"],
-  "rewrites": [
-    {
-      "source": "/api/websocket-scanner",
-      "destination": "/api/websocket-scanner"
-    }
-  ],
   "headers": [
     {
       "source": "/api/(.*)",
@@ -35,7 +20,7 @@
           "value": "*"
         },
         {
-          "key": "Access-Control-Allow-Methods",
+          "key": "Access-Control-Allow-Methods", 
           "value": "GET, POST, PUT, DELETE, OPTIONS"
         },
         {

@@ -629,31 +629,23 @@ const EnhancedSqueezeScanner = () => {
         )}
       </div>
 
-      {/* Debug Summary State */}
+      {/* API Status Indicator */}
       <div style={{ 
-        background: 'red', 
+        background: apiMode === 'LIVE_ORTEX' ? 'linear-gradient(135deg, #059669 0%, #10b981 100%)' : 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)', 
         color: 'white', 
-        padding: '2rem', 
-        margin: '2rem', 
+        padding: '1rem', 
+        margin: '0 2rem 1rem 2rem', 
         borderRadius: '8px',
-        fontFamily: 'monospace',
-        fontSize: '1.5rem',
         textAlign: 'center',
-        border: '3px solid yellow',
-        zIndex: 9999,
-        position: 'relative'
+        fontSize: '0.875rem',
+        fontWeight: '600',
+        border: '1px solid rgba(255,255,255,0.2)'
       }}>
-        🔥 LIVE DATA IS WORKING! 🔥
-        <br />
-        MODE: {apiMode} | TOTAL: {summary.total} | LEGENDARY: {summary.legendary}
-        <br />
-        {summary.total > 0 ? '✅ DATA LOADED SUCCESSFULLY!' : '⏳ LOADING...'}
-        <br />
-        {apiMode === 'LIVE_ORTEX' ? '📈 REAL MARKET DATA' : '🧪 DEMO DATA'}
+        {apiMode === 'LIVE_ORTEX' ? '📈 LIVE MARKET DATA' : '🧪 ENHANCED DEMO DATA'} • 
+        {summary.total} stocks • {summary.legendary} legendary setups
       </div>
 
       {/* Enhanced Summary Dashboard */}
-      {console.log('🎨 Rendering summary dashboard with:', summary)}
       <div key={`summary-${summary.total}-${summary.legendary}`} style={{
         background: 'rgba(15, 23, 42, 0.8)',
         border: '1px solid #334155',
@@ -678,14 +670,7 @@ const EnhancedSqueezeScanner = () => {
             borderTop: '3px solid #64748b',
             transition: 'transform 0.2s ease, box-shadow 0.2s ease'
           }}>
-            <div style={{ 
-              fontSize: '3rem', 
-              fontWeight: 'bold', 
-              color: summary.total > 0 ? '#00ff00' : '#ff0000', 
-              marginBottom: '0.5rem',
-              textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
-              animation: summary.total > 0 ? 'pulse 1s infinite' : 'none'
-            }}>
+            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'white', marginBottom: '0.5rem' }}>
               {summary.total || 0}
             </div>
             <div style={{ fontSize: '0.75rem', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '1px' }}>
@@ -702,14 +687,7 @@ const EnhancedSqueezeScanner = () => {
             animation: summary.legendary > 0 ? 'pulse 2s infinite' : 'none',
             boxShadow: '0 8px 25px rgba(168, 85, 247, 0.4)'
           }}>
-            <div style={{ 
-              fontSize: '3rem', 
-              fontWeight: 'bold', 
-              color: summary.legendary > 0 ? '#ffff00' : '#ff0000', 
-              marginBottom: '0.5rem',
-              textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
-              animation: summary.legendary > 0 ? 'pulse 1s infinite' : 'none'
-            }}>
+            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'white', marginBottom: '0.5rem' }}>
               {summary.legendary || 0}
             </div>
             <div style={{ fontSize: '0.75rem', color: 'white', textTransform: 'uppercase', letterSpacing: '1px' }}>

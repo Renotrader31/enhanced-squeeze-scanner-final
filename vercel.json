@@ -1,15 +1,6 @@
 {
   "name": "enhanced-squeeze-scanner",
   "version": 2,
-  "framework": "nextjs",
-  "buildCommand": "npm run build",
-  "devCommand": "npm run dev",
-  "installCommand": "npm install",
-  "functions": {
-    "pages/api/**.js": {
-      "runtime": "nodejs20.x"
-    }
-  },
   "regions": ["iad1"],
   "headers": [
     {

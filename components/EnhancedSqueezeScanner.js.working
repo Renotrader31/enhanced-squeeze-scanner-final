@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 
@@ -199,9 +200,8 @@ const EnhancedSqueezeScanner = () => {
         // Determine endpoint based on configuration
         let endpoint = '/api/scan-bulk-demo-simple';
         
-        // Check for live data preference - prioritize live data in production
-        const useLiveData = process.env.NEXT_PUBLIC_USE_LIVE_DATA === 'true' || 
-                           (typeof window !== 'undefined' && window.location.hostname !== 'localhost');
+        // Check for live data preference
+        const useLiveData = process.env.NEXT_PUBLIC_USE_LIVE_DATA === 'true';
         
         if (useLiveData) {
           endpoint = '/api/scan-live-ortex';
@@ -629,32 +629,8 @@ const EnhancedSqueezeScanner = () => {
         )}
       </div>
 
-      {/* Debug Summary State */}
-      <div style={{ 
-        background: 'red', 
-        color: 'white', 
-        padding: '2rem', 
-        margin: '2rem', 
-        borderRadius: '8px',
-        fontFamily: 'monospace',
-        fontSize: '1.5rem',
-        textAlign: 'center',
-        border: '3px solid yellow',
-        zIndex: 9999,
-        position: 'relative'
-      }}>
-        🔥 LIVE DATA IS WORKING! 🔥
-        <br />
-        MODE: {apiMode} | TOTAL: {summary.total} | LEGENDARY: {summary.legendary}
-        <br />
-        {summary.total > 0 ? '✅ DATA LOADED SUCCESSFULLY!' : '⏳ LOADING...'}
-        <br />
-        {apiMode === 'LIVE_ORTEX' ? '📈 REAL MARKET DATA' : '🧪 DEMO DATA'}
-      </div>
-
       {/* Enhanced Summary Dashboard */}
-      {console.log('🎨 Rendering summary dashboard with:', summary)}
-      <div key={`summary-${summary.total}-${summary.legendary}`} style={{
+      <div style={{
         background: 'rgba(15, 23, 42, 0.8)',
         border: '1px solid #334155',
         borderRadius: '16px',
@@ -678,15 +654,8 @@ const EnhancedSqueezeScanner = () => {
             borderTop: '3px solid #64748b',
             transition: 'transform 0.2s ease, box-shadow 0.2s ease'
           }}>
-            <div style={{ 
-              fontSize: '3rem', 
-              fontWeight: 'bold', 
-              color: summary.total > 0 ? '#00ff00' : '#ff0000', 
-              marginBottom: '0.5rem',
-              textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
-              animation: summary.total > 0 ? 'pulse 1s infinite' : 'none'
-            }}>
-              {summary.total || 0}
+            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'white', marginBottom: '0.5rem' }}>
+              {summary.total}
             </div>
             <div style={{ fontSize: '0.75rem', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '1px' }}>
               TOTAL SCANNED
@@ -702,15 +671,8 @@ const EnhancedSqueezeScanner = () => {
             animation: summary.legendary > 0 ? 'pulse 2s infinite' : 'none',
             boxShadow: '0 8px 25px rgba(168, 85, 247, 0.4)'
           }}>
-            <div style={{ 
-              fontSize: '3rem', 
-              fontWeight: 'bold', 
-              color: summary.legendary > 0 ? '#ffff00' : '#ff0000', 
-              marginBottom: '0.5rem',
-              textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
-              animation: summary.legendary > 0 ? 'pulse 1s infinite' : 'none'
-            }}>
-              {summary.legendary || 0}
+            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'white', marginBottom: '0.5rem' }}>
+              {summary.legendary}
             </div>
             <div style={{ fontSize: '0.75rem', color: 'white', textTransform: 'uppercase', letterSpacing: '1px' }}>
               LEGENDARY 90+
@@ -1052,3 +1014,80 @@ const getHolyGrailStyles = (score) => {
 };
 
 export default EnhancedSqueezeScanner;
+=======
+// Update your EnhancedSqueezeScanner component with these changes:
+
+// 1. In your component, update the startBulkScan function (around line 75):
+
+const startBulkScan = async () => {
+  try {
+    // Choose endpoint based on environment variable or toggle
+    const useLiveData = process.env.NEXT_PUBLIC_USE_LIVE_DATA === 'true';
+    const endpoint = useLiveData ? '/api/scan-live-ortex' : '/api/scan-bulk-expanded';
+    
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        symbols: DEFAULT_SYMBOLS, // Will use expanded symbol list from API
+        filters: filters
+      })
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      setStocks(data.results);
+      setSummary(data.summary);
+      setApiMode(data.mode || 'UNKNOWN');
+      
+      // Extract alerts
+      const allAlerts = data.results.flatMap(stock => 
+        (stock.alerts || []).map(alert => ({
+          ...alert,
+          symbol: stock.symbol,
+          timestamp: new Date().toISOString()
+        }))
+      );
+      setAlerts(allAlerts);
+      
+      console.log(`✅ Scan complete: ${data.results.length} stocks processed`);
+    } else {
+      console.error('Scan failed:', data.error);
+      setApiMode('ERROR');
+    }
+    
+  } catch (error) {
+    console.error('Scan error:', error);
+    setApiMode('ERROR');
+  }
+};
+
+// 2. Add these new expanded symbols to replace DEFAULT_SYMBOLS (around line 50):
+
+const DEFAULT_SYMBOLS = [
+  // This will be overridden by the API's expanded symbol list
+  'GME', 'AMC', 'BBBY', 'ATER', 'TSLA', 'AAPL', 'NVDA', 'MSFT'
+];
+
+// 3. Update the header to show mode (around line 280):
+
+<div className="flex items-center mt-2">
+  <div className={`w-2 h-2 rounded-full mr-2 ${
+    apiMode === 'LIVE_ORTEX' ? 'bg-green-500 animate-pulse' : 
+    apiMode === 'EXPANDED_DEMO' ? 'bg-blue-500 animate-pulse' :
+    apiMode === 'ERROR' ? 'bg-red-500' : 'bg-yellow-500'
+  }`}></div>
+  <span className="text-sm text-gray-300">
+    {apiMode === 'LIVE_ORTEX' ? 'Live Ortex Data' :
+     apiMode === 'EXPANDED_DEMO' ? 'Expanded Demo Data - 100+ Stocks' :
+     apiMode === 'ERROR' ? 'API Error' : 'Demo Mode - Realistic Test Data'}
+  </span>
+  <div className="flex items-center ml-4">
+    <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+    <span className="text-sm text-gray-300">Stream Connected</span>
+  </div>
+</div>
+>>>>>>> origin/main
